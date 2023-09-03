@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="hello.order.repository.OrderMapper">
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+        insert into orders (user_id, order_time, item_id, item_quantity, item_price, cancel_flag)
+        values (#{userId}, #{orderTime}, #{orderInfo.itemId},
+                #{orderInfo.itemQuantity}, #{orderInfo.itemPrice}, #{cancelFlag});
+    </insert>
+
+    <!--findBy Id-->
+    <resultMap id="order" type="hello.order.domain.Order">
+        <id property="id" column="id" />
+        <result property="userId" column="user_id" />
+        <result property="cancelFlag" column="cancel_flag" />
+        <result property="orderTime" column="order_time" typeHandler="org.apache.ibatis.type.LocalDateTimeTypeHandler" />
+
+        <association property="orderInfo" javaType="hello.order.domain.OrderInfo">
+            <result property="itemId" column="item_id" />
+            <result property="itemQuantity" column="item_quantity" />
+            <result property="itemPrice" column="item_price" />
+        </association>
+    </resultMap>
+
+    <select id="findById" resultMap="order">
+        select id, user_id, cancel_flag, order_time, item_id, item_quantity, item_price
+        from orders where id = #{id}
+    </select>
+
+</mapper>
